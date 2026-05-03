@@ -10,6 +10,17 @@
 </div>
 @endif
 
+
+<!-- Form tìm kiếm thành viên -->
+<form method="GET" action="/users" class="mb-3 row g-2">
+    <div class="col-auto">
+        <input type="text" name="q" class="form-control" placeholder="Tìm kiếm tên, email..." value="{{ request('q') }}">
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-secondary">Tìm kiếm</button>
+    </div>
+</form>
+
 <a href="/users/create" class="btn btn-primary mb-3">+ Thêm thành viên</a>
 
 <table class="table table-bordered">
@@ -17,6 +28,7 @@
     <th>ID</th>
     <th>Tên</th>
     <th>Email</th>
+    <th>Điện thoại</th>
     <th></th>
 </tr>
 
@@ -25,6 +37,7 @@
     <td>{{ $u->id }}</td>
     <td>{{ $u->name }}</td>
     <td>{{ $u->email }}</td>
+    <td>{{ $u->phone ?? '-' }}</td>
     <td>
         <a href="/users/delete/{{ $u->id }}" class="btn btn-danger btn-sm">Xóa</a>
     </td>

@@ -1,11 +1,17 @@
-<form method="POST" action="/update/{{ $book->id }}" enctype="multipart/form-data">
-@csrf
-<input name="title" value="{{ $book->title }}" class="form-control mb-2">
-<input name="category" value="{{ $book->category }}" class="form-control mb-2">
-<input name="author" value="{{ $book->author }}" class="form-control mb-2">
-<input name="publisher" value="{{ $book->publisher }}" class="form-control mb-2">
-<input name="quantity" value="{{ $book->quantity }}" class="form-control mb-2">
-<input name="price" value="{{ $book->price }}" class="form-control mb-2">
-<input type="file" name="image" class="form-control mb-2">
-<button class="btn btn-primary">Cập nhật</button>
+@extends('layouts.master')
+
+@section('content')
+<h2>Sửa sách</h2>
+<form method="POST" action="{{ route('books.update', $book->id) }}" enctype="multipart/form-data">
+    @csrf
+    @method('PUT')
+    <input type="text" name="title" value="{{ $book->title }}"><br>
+    <input type="text" name="author" value="{{ $book->author }}"><br>
+    <textarea name="description">{{ $book->description }}</textarea><br>
+    @if($book->image)
+        <img src="{{ asset('uploads/' . $book->image) }}" width="120"><br>
+    @endif
+    <input type="file" name="image"><br>
+    <button type="submit">Cập nhật</button>
 </form>
+@endsection

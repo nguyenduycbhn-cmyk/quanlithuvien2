@@ -8,98 +8,141 @@ use App\Models\Borrow;
 
 class BookController extends Controller
 {
+    // 📊 DASHBOARD
     public function dashboard()
     {
         $totalBooks = Book::count();
         $totalBorrow = Borrow::count();
         $borrowing = Borrow::whereNull('return_date')->count();
 
-        return view('dashboard', compact('totalBooks','totalBorrow','borrowing'));
+        $topBooks = Borrow::select('book_name')
+            ->selectRaw('COUNT(*) as total')
+            ->groupBy('book_name')
+            ->orderByDesc('total')
+            ->limit(5)
+            ->get();
+
+        $topUsers = Borrow::select('user_name')
+            ->selectRaw('COUNT(*) as total')
+            ->groupBy('user_name')
+            ->orderByDesc('total')
+            ->limit(5)
+            ->get();
+
+        return view('dashboard', compact(
+            'totalBooks',
+            'totalBorrow',
+            'borrowing',
+            'topBooks',
+            'topUsers'
+        ));
     }
 
+    // 📚 LIST + SEARCH
     public function index(Request $request)
     {
-        $q = $request->q;
+        $keyword = $request->keyword;
 
-        $books = Book::when($q, function ($query) use ($q) {
-            return $query->where('title', 'like', "%$q%");
-        })->paginate(5);
+        $books = Book::when($keyword, function ($q) use ($keyword) {
+            $q->where('title', 'like', "%$keyword%")
+              ->orWhere('author', 'like', "%$keyword%");
+        })
+        ->latest()
+        ->paginate(5);
 
-        return view('books.index', compact('books', 'q'));
+        return view('books.index', compact('books', 'keyword'));
     }
 
+    // ➕ CREATE FORM (🔥 FIX LỖI CREATE)
     public function create()
     {
         return view('books.create');
     }
 
-    // 🔥 SỬA Ở ĐÂY
+    // 💾 STORE
     public function store(Request $request)
     {
-        // ✅ Validate dữ liệu
         $request->validate([
             'title' => 'required',
-            'category' => 'required',
             'author' => 'required',
+            'category' => 'required',
             'publisher' => 'required',
-            'quantity' => 'required|numeric|min:1',
-            'price' => 'required|numeric|min:0'
+            'quantity' => 'required|integer',
+            'price' => 'required|integer',
         ]);
 
-        $data = $request->all();
+        $data = $request->only([
+            'title',
+            'author',
+            'category',
+            'publisher',
+            'quantity',
+            'price',
+            'description'
+        ]);
 
-        // ✅ Upload ảnh
+        // 📷 upload image
         if ($request->hasFile('image')) {
             $file = $request->file('image');
-            $name = time().'.'.$file->getClientOriginalExtension();
-            $file->move(public_path('uploads'), $name);
-            $data['image'] = $name;
+            $filename = time().'_'.$file->getClientOriginalName();
+            $file->move(public_path('uploads'), $filename);
+            $data['image'] = $filename;
         }
 
-        // ✅ Lưu vào DB
         Book::create($data);
 
-        // ✅ Thông báo
-        return redirect('/')->with('success','Thêm sách thành công!');
+        return redirect()->route('books.index')->with('success', 'Thêm sách thành công!');
     }
 
+    // ✏️ EDIT
     public function edit($id)
     {
-        $book = Book::find($id);
+        $book = Book::findOrFail($id);
         return view('books.edit', compact('book'));
     }
 
+    // 🔄 UPDATE
     public function update(Request $request, $id)
     {
-        $book = Book::find($id);
+        $book = Book::findOrFail($id);
 
-        // validate luôn khi sửa
-        $request->validate([
-            'title' => 'required',
-            'category' => 'required',
-            'author' => 'required',
-            'publisher' => 'required',
-            'quantity' => 'required|numeric|min:1',
-            'price' => 'required|numeric|min:0'
+        $data = $request->only([
+            'title',
+            'author',
+            'category',
+            'publisher',
+            'quantity',
+            'price',
+            'description'
         ]);
 
-        $data = $request->all();
-
         if ($request->hasFile('image')) {
+            if ($book->image && file_exists(public_path('uploads/'.$book->image))) {
+                unlink(public_path('uploads/'.$book->image));
+            }
+
             $file = $request->file('image');
-            $name = time().'.'.$file->getClientOriginalExtension();
-            $file->move(public_path('uploads'), $name);
-            $data['image'] = $name;
+            $filename = time().'_'.$file->getClientOriginalName();
+            $file->move(public_path('uploads'), $filename);
+            $data['image'] = $filename;
         }
 
         $book->update($data);
 
-        return redirect('/')->with('success','Cập nhật thành công!');
+        return redirect()->route('books.index')->with('success', 'Cập nhật thành công!');
     }
 
+    // ❌ DELETE
     public function destroy($id)
     {
-        Book::destroy($id);
-        return redirect('/')->with('success','Xóa thành công!');
+        $book = Book::findOrFail($id);
+
+        if ($book->image && file_exists(public_path('uploads/'.$book->image))) {
+            unlink(public_path('uploads/'.$book->image));
+        }
+
+        $book->delete();
+
+        return redirect()->route('books.index')->with('success', 'Đã xóa!');
     }
 }

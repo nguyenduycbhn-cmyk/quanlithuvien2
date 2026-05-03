@@ -9,8 +9,15 @@ class UserController extends Controller
 {
     public function index()
 {
-    $users = \App\Models\User::all();
-
+    $query = \App\Models\User::query();
+    if ($search = request('q')) {
+        $query->where(function($q) use ($search) {
+            $q->where('name', 'like', "%$search%")
+              ->orWhere('email', 'like', "%$search%")
+            ;
+        });
+    }
+    $users = $query->get();
     return view('users.index', compact('users'));
 }
 
@@ -23,14 +30,15 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'email' => 'required|email',
-            'password' => 'required'
+            'email' => 'required|email|unique:users,email',
+            'phone' => 'nullable'
         ]);
 
         User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => bcrypt($request->password)
+            'phone' => $request->phone,
+            'password' => bcrypt('123456') // Mật khẩu mặc định
         ]);
 
         return redirect('/users')->with('success','Thêm thành viên thành công!');

@@ -2,35 +2,80 @@
 <html>
 <head>
     <title>Thêm thành viên</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        body { background: #f5f6fa; }
+        .card { border-radius: 12px; }
+    </style>
 </head>
 <body>
 
-<div class="container mt-4">
+<div class="container mt-5">
 
-<h2>➕ Thêm thành viên</h2>
+<div class="card shadow-lg border-0">
 
-<form method="POST" action="/users/store">
+<div class="card-header bg-success text-white">
+    <h4><i class="bi bi-person-plus"></i> Thêm thành viên mới</h4>
+</div>
+
+<div class="card-body">
+
+{{-- ✅ THÔNG BÁO --}}
+@if(session('error'))
+<div class="alert alert-danger">{{ session('error') }}</div>
+@endif
+
+@if(session('success'))
+<div class="alert alert-success">{{ session('success') }}</div>
+@endif
+
+{{-- ✅ VALIDATE --}}
+@if($errors->any())
+<div class="alert alert-danger">
+    <ul class="mb-0">
+        @foreach($errors->all() as $e)
+        <li>{{ $e }}</li>
+        @endforeach
+    </ul>
+</div>
+@endif
+
+<form method="POST" action="{{ route('users.store') }}">
 @csrf
 
 <div class="mb-3">
-    <label>Tên</label>
-    <input name="name" class="form-control">
+    <label class="form-label">👤 Họ và tên</label>
+    <input type="text" name="name" class="form-control" placeholder="Nhập họ và tên" required>
 </div>
 
 <div class="mb-3">
-    <label>Email</label>
-    <input name="email" class="form-control">
+    <label class="form-label">📧 Email</label>
+    <input type="email" name="email" class="form-control" placeholder="Nhập địa chỉ email" required>
 </div>
 
 <div class="mb-3">
-    <label>Password</label>
-    <input type="password" name="password" class="form-control">
+    <label class="form-label">� Số điện thoại</label>
+    <input type="text" name="phone" class="form-control" placeholder="Nhập số điện thoại">
 </div>
 
-<button class="btn btn-success">Thêm</button>
+<!-- BUTTON -->
+<div class="d-flex justify-content-between">
+    <a href="/users" class="btn btn-secondary">
+        ← Quay lại
+    </a>
+
+    <button type="submit" class="btn btn-success">
+        <i class="bi bi-check-circle"></i> Thêm thành viên
+    </button>
+</div>
 
 </form>
+
+</div>
+</div>
 
 </div>
 
