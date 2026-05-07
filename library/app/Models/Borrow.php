@@ -10,6 +10,9 @@ protected $fillable = [
     'user_name',
     'book_name',
     'borrow_date',
-    'return_date'
+    'due_date',
+    'return_date',
+    'penalty',
+    'returned_at'
 ];
 }

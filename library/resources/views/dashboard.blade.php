@@ -4,8 +4,6 @@
     <title>Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -50,19 +48,7 @@
 <!-- 📊 + 📚 -->
 <div class="row mt-4">
 
-    <!-- 📊 BIỂU ĐỒ -->
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header bg-success text-white">
-                📊 Thống kê
-            </div>
-            <div class="card-body">
-                <canvas id="chart"></canvas>
-            </div>
-        </div>
-    </div>
-
-    <!-- 📚 TOP SÁCH -->
+    <!--  TOP SÁCH -->
     <div class="col-md-6">
         <div class="card">
             <div class="card-header bg-primary text-white">
@@ -102,25 +88,6 @@
 
 </div> <!-- END CONTENT -->
 </div> <!-- END FLEX -->
-
-<!-- 📊 SCRIPT CHART -->
-<script>
-const ctx = document.getElementById('chart');
-
-new Chart(ctx, {
-    type: 'pie',
-    data: {
-        labels: ['Tổng sách', 'Đã mượn', 'Đang mượn'],
-        datasets: [{
-            data: [
-                {{ $totalBooks }},
-                {{ $totalBorrow }},
-                {{ $borrowing }}
-            ]
-        }]
-    }
-});
-</script>
 
 </body>
 </html>
