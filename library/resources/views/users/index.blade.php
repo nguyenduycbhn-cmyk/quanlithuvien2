@@ -39,7 +39,8 @@
     <td>{{ $u->email }}</td>
     <td>{{ $u->phone ?? '-' }}</td>
     <td>
-        <a href="/users/delete/{{ $u->id }}" class="btn btn-danger btn-sm">Xóa</a>
+        <a href="{{ route('users.edit', $u->id) }}" class="btn btn-warning btn-sm">Sửa</a>
+        <a href="/users/delete/{{ $u->id }}" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc muốn xóa?')">Xóa</a>
     </td>
 </tr>
 @endforeach
