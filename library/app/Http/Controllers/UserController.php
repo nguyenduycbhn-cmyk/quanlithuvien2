@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -72,5 +73,30 @@ class UserController extends Controller
         ]);
 
         return redirect('/users')->with('success','Cập nhật thành viên thành công!');
+    }
+
+    public function changePasswordForm()
+    {
+        return view('users.change-password');
+    }
+
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required',
+            'password' => 'required|min:8|confirmed',
+        ]);
+
+        $user = auth()->user();
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return back()->withErrors(['current_password' => 'Mật khẩu hiện tại không đúng']);
+        }
+
+        $user->update([
+            'password' => Hash::make($request->password)
+        ]);
+
+        return redirect('/users')->with('success', 'Đổi mật khẩu thành công!');
     }
 }

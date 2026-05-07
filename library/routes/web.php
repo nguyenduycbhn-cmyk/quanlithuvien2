@@ -60,7 +60,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/books/edit/{id}', [BookController::class, 'edit'])
         ->name('books.edit');
 
-    Route::put('/books/update/{id}', [BookController::class, 'update'])
+    Route::post('/books/update/{id}', [BookController::class, 'update'])
         ->name('books.update');
 
     Route::get('/books/delete/{id}', [BookController::class, 'destroy'])
@@ -107,4 +107,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/users/delete/{id}', [UserController::class, 'destroy'])
         ->name('users.delete');
+
+    Route::get('/users/change-password', [UserController::class, 'changePasswordForm'])
+        ->name('users.change-password');
+    Route::post('/users/change-password', [UserController::class, 'changePassword'])
+        ->name('users.change-password.post');
 });
