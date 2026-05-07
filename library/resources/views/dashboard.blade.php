@@ -2,92 +2,223 @@
 <html>
 <head>
     <title>Dashboard</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <style>
+        body{
+            margin:0;
+            background:#f4f6f9;
+            font-family:Arial, sans-serif;
+        }
+
+        .sidebar{
+            width:250px;
+            height:100vh;
+            background:#2c3e50;
+            position:fixed;
+            overflow:auto;
+        }
+
+        .sidebar h4{
+            padding:20px;
+            color:white;
+            border-bottom:1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar a{
+            display:block;
+            padding:15px 20px;
+            color:white;
+            text-decoration:none;
+            transition:0.3s;
+        }
+
+        .sidebar a:hover{
+            background:#34495e;
+        }
+
+        .content{
+            margin-left:250px;
+            padding:20px;
+        }
+
+        .card-box{
+            border:none;
+            border-radius:12px;
+            padding:20px;
+            color:white;
+            font-size:20px;
+            font-weight:bold;
+            box-shadow:0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .table-card{
+            border:none;
+            border-radius:12px;
+            overflow:hidden;
+            box-shadow:0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        @media(max-width:768px){
+
+            .sidebar{
+                width:100%;
+                height:auto;
+                position:relative;
+            }
+
+            .content{
+                margin-left:0;
+            }
+        }
+    </style>
 </head>
+
 <body>
 
-<div style="display:flex;">
-
 <!-- SIDEBAR -->
-<div style="width:250px;background:#2c3e50;color:white;height:100vh;">
-    <h4 style="padding:20px;">📚 Library</h4>
+<div class="sidebar">
 
-    <a href="{{ route('dashboard') }}" style="display:block;padding:10px;color:white;">📊 Dashboard</a>
-    <a href="{{ route('books.index') }}" style="display:block;padding:10px;color:white;">📚 Quản lý sách</a>
-    <a href="/borrow" style="display:block;padding:10px;color:white;">📖 Mượn trả</a>
-    <a href="/users" style="display:block;padding:10px;color:white;">👤 Thành viên</a>
+    <h4>📚 Library</h4>
+
+    <a href="{{ route('dashboard') }}">
+        <i class="bi bi-speedometer2"></i> Dashboard
+    </a>
+
+    <a href="{{ route('books.index') }}">
+        <i class="bi bi-book"></i> Quản lý sách
+    </a>
+
+    <a href="{{ route('borrows.index') }}">
+        <i class="bi bi-journal-text"></i> Mượn trả
+    </a>
+
+    <a href="{{ route('users.index') }}">
+        <i class="bi bi-people"></i> Thành viên
+    </a>
+
 </div>
 
 <!-- CONTENT -->
-<div style="flex:1;padding:20px;">
+<div class="content">
 
-<h2>Dashboard</h2>
+    <h2 class="mb-4">📊 Dashboard</h2>
 
-<!-- 🔢 THỐNG KÊ -->
-<div class="row">
-    <div class="col-md-4">
-        <div class="card bg-primary text-white p-3">
-            Tổng sách: {{ $totalBooks }}
-        </div>
-    </div>
+    <!-- THỐNG KÊ -->
+    <div class="row g-3">
 
-    <div class="col-md-4">
-        <div class="card bg-warning text-white p-3">
-            Đã mượn: {{ $totalBorrow }}
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="card bg-danger text-white p-3">
-            Đang mượn: {{ $borrowing }}
-        </div>
-    </div>
-</div>
-
-<!-- 📊 + 📚 -->
-<div class="row mt-4">
-
-    <!--  TOP SÁCH -->
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                📚 Top sách mượn nhiều
+        <div class="col-md-4">
+            <div class="card-box bg-primary">
+                <div>Tổng sách</div>
+                <h2>{{ $totalBooks ?? 0 }}</h2>
             </div>
-            <div class="card-body">
+        </div>
+
+        <div class="col-md-4">
+            <div class="card-box bg-warning">
+                <div>Đã mượn</div>
+                <h2>{{ $totalBorrow ?? 0 }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card-box bg-danger">
+                <div>Đang mượn</div>
+                <h2>{{ $borrowing ?? 0 }}</h2>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- TOP SÁCH -->
+    <div class="card table-card mt-4">
+
+        <div class="card-header bg-primary text-white">
+            📚 Top sách mượn nhiều
+        </div>
+
+        <div class="card-body">
+
+            @if(isset($topBooks) && count($topBooks) > 0)
+
                 <ul class="list-group">
+
                     @foreach($topBooks as $book)
-                        <li class="list-group-item d-flex justify-content-between">
+
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+
                             {{ $book->book_name }}
-                            <span class="badge bg-primary">{{ $book->total }}</span>
+
+                            <span class="badge bg-primary rounded-pill">
+                                {{ $book->total }}
+                            </span>
+
                         </li>
+
                     @endforeach
+
                 </ul>
-            </div>
+
+            @else
+
+                <p>Chưa có dữ liệu.</p>
+
+            @endif
+
         </div>
     </div>
 
+    <!-- TOP USER -->
+    <div class="card table-card mt-4">
+
+        <div class="card-header bg-warning text-dark">
+            👤 Thành viên mượn nhiều nhất
+        </div>
+
+        <div class="card-body">
+
+            @if(isset($topUsers) && count($topUsers) > 0)
+
+                <ul class="list-group">
+
+                    @foreach($topUsers as $user)
+
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+
+                            {{ $user->user_name }}
+
+                            <span class="badge bg-warning text-dark rounded-pill">
+                                {{ $user->total }}
+                            </span>
+
+                        </li>
+
+                    @endforeach
+
+                </ul>
+
+            @else
+
+                <p>Chưa có dữ liệu.</p>
+
+            @endif
+
+        </div>
+
+    </div>
+
 </div>
 
-<!-- 👤 TOP USER -->
-<div class="card mt-4">
-    <div class="card-header bg-warning text-white">
-        👤 Thành viên mượn nhiều nhất
-    </div>
-    <div class="card-body">
-        <ul class="list-group">
-            @foreach($topUsers as $user)
-                <li class="list-group-item d-flex justify-content-between">
-                    {{ $user->user_name }}
-                    <span class="badge bg-warning">{{ $user->total }}</span>
-                </li>
-            @endforeach
-        </ul>
-    </div>
-</div>
-
-</div> <!-- END CONTENT -->
-</div> <!-- END FLEX -->
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
