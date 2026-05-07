@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Library</title>
+    <title>Quản lý thư viện</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
@@ -44,7 +44,7 @@
 
 <!-- SIDEBAR -->
 <div class="sidebar">
-    <h4>📚 Library</h4>
+    <h4>📚 Quản lý thư viện</h4>
 
     <a href="/dashboard" class="{{ request()->is('dashboard') ? 'active' : '' }}">
         📊 Dashboard
@@ -61,6 +61,14 @@
     <a href="/users" class="{{ request()->is('users*') ? 'active' : '' }}">
         👤 Thành viên
     </a>
+
+    <!-- LOGOUT -->
+    <form method="POST" action="{{ route('logout') }}" style="margin-top: 20px;">
+        @csrf
+        <button type="submit" style="background: none; border: none; color: white; cursor: pointer; width: 100%; text-align: left; padding: 10px;">
+            🚪 Đăng xuất
+        </button>
+    </form>
 </div>
 
 <!-- CONTENT -->

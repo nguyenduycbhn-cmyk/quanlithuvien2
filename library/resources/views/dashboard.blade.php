@@ -87,7 +87,7 @@
 <!-- SIDEBAR -->
 <div class="sidebar">
 
-    <h4>📚 Library</h4>
+    <h4>📚 Quản lý thư viện</h4>
 
     <a href="{{ route('dashboard') }}">
         <i class="bi bi-speedometer2"></i> Dashboard
